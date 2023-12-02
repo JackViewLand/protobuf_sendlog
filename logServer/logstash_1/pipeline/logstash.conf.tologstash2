@@ -1,0 +1,32 @@
+input {
+  tcp {
+    port => 9601
+    codec => protobuf { 
+        class_name => "ProtobufLog.Sample"
+        class_file => '/tmp/etc/sample_pb.rb'
+        protobuf_version => 3
+    }  
+  }
+}
+
+filter {
+  grok {
+    match => { "message" => "%{GREEDYDATA:message}" }
+  }
+  mutate {
+    remove_field => ["@timestamp", "@version", "host", "port"]
+  }
+}
+
+output {
+  tcp {
+    host => "logstash_2"
+    port => 9602
+    codec => protobuf{
+        class_name => "ProtobufLog.detail"
+        class_file => '/tmp/etc/detail_pb.rb'
+        protobuf_version => 3
+    }
+  }
+
+}

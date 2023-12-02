@@ -1,0 +1,39 @@
+version: "3"
+services:
+    logstash_1:
+        container_name: logstash_1
+        build:
+          context: ./
+          dockerfile: Dockerfile
+        volumes:
+          - ./logstash_1/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+          - ./logstash_1/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+          - ./etc:/tmp/etc
+        environment:
+          LS_OPTS: "--config.reload.automatic"
+          KAFKA_IP: ${KAFKA_IP}
+
+        ports:
+          - "9601:9601"
+        networks:
+          - pbtest-network
+
+    logstash_2:
+        container_name: logstash_2
+        build:
+          context: ./
+          dockerfile: Dockerfile
+        volumes:
+          - ./logstash_2/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+          - ./logstash_2/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+          - ./etc:/tmp/etc
+          - ./logs:/tmp/logs
+        environment:
+          LS_OPTS: "--config.reload.automatic"
+          KAFKA_IP: ${KAFKA_IP}
+        ports:
+          - "9602:9602"
+        networks:
+          - pbtest-network
+networks:
+    pbtest-network:

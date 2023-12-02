@@ -1,0 +1,19 @@
+input {
+  tcp {
+    port => 9602
+    codec => protobuf{
+        class_name => "ProtobufLog.Sample"
+        class_file => '/tmp/etc/sample_pb.rb'
+        protobuf_version => 3
+    }
+  }
+}
+
+output {
+  stdout {
+    codec => rubydebug
+  }
+  file {
+    path => "/tmp/protobuf_test.log"
+  }
+}
